@@ -59,6 +59,7 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         
         #qrcode {
@@ -117,6 +118,15 @@
             margin-bottom: 20px;
         }
         
+        .debug-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            display: none; /* Oculto por defecto */
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -157,6 +167,9 @@
             <!-- Información del dispositivo detectado -->
         </div>
         
+        <!-- Información de debug (puedes quitar esto después) -->
+        <div class="debug-info" id="debug-info"></div>
+        
         <div class="github-info">
             <h3>Instrucciones para GitHub Pages</h3>
             <p>1. Sube este archivo HTML como <strong>index.html</strong></p>
@@ -174,50 +187,99 @@
         const mobileView = document.getElementById('mobile-view');
         const downloadBtn = document.getElementById('download-btn');
         const deviceInfo = document.getElementById('device-info');
+        const debugInfo = document.getElementById('debug-info');
         
         // Función para detectar si es un dispositivo móvil
         function isMobileDevice() {
-            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+            return (typeof window.orientation !== "undefined") || 
+                   (navigator.userAgent.indexOf('IEMobile') !== -1) ||
+                   (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
         }
         
-        // Función para generar el código QR
+        // Función para generar el código QR con manejo de errores
         function generateQRCode() {
-            // Usamos la URL completa para el código QR
-            const fullUrl = window.location.href.replace(/index\.html$/, '') + apkUrl;
-            
-            QRCode.toCanvas(document.getElementById('qrcode'), fullUrl, {
-                width: 200,
-                margin: 1,
-                color: {
-                    dark: '#000000',
-                    light: '#FFFFFF'
-                }
-            }, function (error) {
-                if (error) console.error(error);
-            });
+            try {
+                // Obtener la URL base actual
+                const baseUrl = window.location.href;
+                const fullUrl = baseUrl.replace(/index\.html$/, '').replace(/\/$/, '') + '/' + apkUrl;
+                
+                // Debug info
+                debugInfo.innerHTML = `URL generada para QR: ${fullUrl}<br>URL base: ${baseUrl}`;
+                debugInfo.style.display = 'block';
+                
+                // Limpiar contenedor QR primero
+                const qrContainer = document.getElementById('qrcode');
+                qrContainer.innerHTML = '';
+                
+                // Generar QR con manejo de errores mejorado
+                QRCode.toCanvas(qrContainer, fullUrl, {
+                    width: 200,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    },
+                    errorCorrectionLevel: 'H'
+                }, function (error) {
+                    if (error) {
+                        console.error('Error generando QR:', error);
+                        qrContainer.innerHTML = `
+                            <div style="color: red; padding: 20px;">
+                                <p>Error generando código QR</p>
+                                <p>URL: ${fullUrl}</p>
+                                <button onclick="generateQRCode()" style="padding: 10px; margin: 10px;">Reintentar</button>
+                            </div>
+                        `;
+                    } else {
+                        console.log('QR generado exitosamente');
+                        debugInfo.innerHTML += '<br>✅ QR generado correctamente';
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error en generateQRCode:', error);
+                document.getElementById('qrcode').innerHTML = `
+                    <div style="color: red;">
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
         }
         
         // Configurar la página según el dispositivo
         function setupPage() {
             const isMobile = isMobileDevice();
             
+            console.log('Dispositivo detectado:', isMobile ? 'Móvil' : 'Computador');
+            console.log('User Agent:', navigator.userAgent);
+            
             if (isMobile) {
                 // Es un dispositivo móvil - mostrar botón de descarga
                 desktopView.style.display = 'none';
                 mobileView.style.display = 'block';
                 downloadBtn.href = apkUrl;
-                deviceInfo.textContent = "Dispositivo móvil detectado - Usa el botón para descargar Ecomarket";
+                deviceInfo.textContent = "📱 Dispositivo móvil detectado - Usa el botón para descargar Ecomarket";
             } else {
                 // Es un computador - mostrar código QR
                 desktopView.style.display = 'block';
                 mobileView.style.display = 'none';
-                generateQRCode();
-                deviceInfo.textContent = "Computador detectado - Usa el código QR para descargar Ecomarket en tu móvil";
+                deviceInfo.textContent = "💻 Computador detectado - Usa el código QR para descargar Ecomarket en tu móvil";
+                
+                // Generar QR después de un pequeño delay para asegurar que el DOM esté listo
+                setTimeout(generateQRCode, 100);
             }
         }
         
-        // Inicializar la página
-        document.addEventListener('DOMContentLoaded', setupPage);
+        // Inicializar la página cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM cargado, iniciando configuración...');
+            setupPage();
+        });
+        
+        // También inicializar cuando la página termine de cargar
+        window.addEventListener('load', function() {
+            console.log('Página completamente cargada');
+        });
     </script>
 </body>
 </html>
