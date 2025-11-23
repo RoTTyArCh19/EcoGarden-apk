@@ -124,7 +124,6 @@
             border-radius: 10px;
             margin-top: 20px;
             font-size: 0.8rem;
-            display: none; /* Oculto por defecto */
         }
         
         @media (max-width: 768px) {
@@ -158,7 +157,7 @@
             </div>
             
             <div id="mobile-view">
-                <a href="#" class="btn-download" id="download-btn" download="ecomarket.apk">Descargar Ecogarden APK</a>
+                <a href="#" class="btn-download" id="download-btn" download="ecogarden.apk">Descargar Ecogarden APK</a>
                 <p class="instructions">Toca el botón para descargar e instalar la aplicación Ecogarden</p>
             </div>
         </div>
@@ -167,11 +166,20 @@
             <!-- Información del dispositivo detectado -->
         </div>
         
+        <!-- Debug info ahora SÍ existe en el DOM -->
+        <div class="debug-info" id="debug-info"></div>
+        
+        <div class="github-info">
+            <h3>Instrucciones</h3>
+            <p>• En computador: Usa el código QR para descargar en tu móvil</p>
+            <p>• En móvil: Toca el botón de descarga directa</p>
+        </div>
     </div>
 
     <script>
-        // El archivo APK debe llamarse "ecomarket.apk" y estar en la misma carpeta
+        // El archivo APK debe llamarse "ecogarden.apk" y estar en la misma carpeta
         const apkUrl = "ecogarden.apk";
+        const apkFullUrl = "https://rottyarch19.github.io/EcoGarden-apk/ecogarden.apk";
         
         // Elementos del DOM
         const desktopView = document.getElementById('desktop-view');
@@ -190,20 +198,24 @@
         // Función para generar el código QR con manejo de errores
         function generateQRCode() {
             try {
-                // Obtener la URL base actual
-                const baseUrl = window.location.href;
-                const fullUrl = "https://rottyarch19.github.io/EcoGarden-apk/ecogarden.apk";
-                
-                // Debug info
-                debugInfo.innerHTML = `URL generada para QR: ${fullUrl}<br>URL base: ${baseUrl}`;
-                debugInfo.style.display = 'block';
+                console.log('Iniciando generación de QR...');
                 
                 // Limpiar contenedor QR primero
                 const qrContainer = document.getElementById('qrcode');
+                if (!qrContainer) {
+                    throw new Error('No se encontró el contenedor del QR');
+                }
+                
                 qrContainer.innerHTML = '';
                 
-                // Generar QR con manejo de errores mejorado
-                QRCode.toCanvas(qrContainer, fullUrl, {
+                // Debug info
+                if (debugInfo) {
+                    debugInfo.innerHTML = `🔗 URL para descarga: ${apkFullUrl}`;
+                    debugInfo.style.display = 'block';
+                }
+                
+                // Generar QR
+                QRCode.toCanvas(qrContainer, apkFullUrl, {
                     width: 200,
                     margin: 2,
                     color: {
@@ -217,24 +229,41 @@
                         qrContainer.innerHTML = `
                             <div style="color: red; padding: 20px;">
                                 <p>Error generando código QR</p>
-                                <p>URL: ${fullUrl}</p>
-                                <button onclick="generateQRCode()" style="padding: 10px; margin: 10px;">Reintentar</button>
+                                <p>URL: ${apkFullUrl}</p>
+                                <button onclick="regenerateQR()" style="padding: 10px; margin: 10px; background: #ff4081; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                    Reintentar
+                                </button>
                             </div>
                         `;
                     } else {
-                        console.log('QR generado exitosamente');
-                        debugInfo.innerHTML += '<br>✅ QR generado correctamente';
+                        console.log('✅ QR generado exitosamente');
+                        if (debugInfo) {
+                            debugInfo.innerHTML += '<br>✅ QR generado correctamente';
+                        }
                     }
                 });
                 
             } catch (error) {
                 console.error('Error en generateQRCode:', error);
-                document.getElementById('qrcode').innerHTML = `
-                    <div style="color: red;">
-                        Error: ${error.message}
-                    </div>
-                `;
+                const qrContainer = document.getElementById('qrcode');
+                if (qrContainer) {
+                    qrContainer.innerHTML = `
+                        <div style="color: red; padding: 20px;">
+                            Error: ${error.message}
+                            <br>
+                            <button onclick="generateQRCode()" style="padding: 10px; margin: 10px; background: #ff4081; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                Reintentar Generación QR
+                            </button>
+                        </div>
+                    `;
+                }
             }
+        }
+        
+        // Función para regenerar QR (global para que funcione en el onclick)
+        function regenerateQR() {
+            console.log('Reintentando generar QR...');
+            generateQRCode();
         }
         
         // Configurar la página según el dispositivo
@@ -249,15 +278,16 @@
                 desktopView.style.display = 'none';
                 mobileView.style.display = 'block';
                 downloadBtn.href = apkUrl;
-                deviceInfo.textContent = "📱 Dispositivo móvil detectado - Usa el botón para descargar Ecomarket";
+                deviceInfo.textContent = "📱 Dispositivo móvil detectado - Usa el botón para descargar Ecogarden";
             } else {
                 // Es un computador - mostrar código QR
                 desktopView.style.display = 'block';
                 mobileView.style.display = 'none';
-                deviceInfo.textContent = "💻 Computador detectado - Usa el código QR para descargar Ecomarket en tu móvil";
+                downloadBtn.href = apkFullUrl;
+                deviceInfo.textContent = "💻 Computador detectado - Usa el código QR para descargar Ecogarden en tu móvil";
                 
                 // Generar QR después de un pequeño delay para asegurar que el DOM esté listo
-                setTimeout(generateQRCode, 100);
+                setTimeout(generateQRCode, 500);
             }
         }
         
@@ -270,8 +300,11 @@
         // También inicializar cuando la página termine de cargar
         window.addEventListener('load', function() {
             console.log('Página completamente cargada');
+            // Regenerar QR por si acaso
+            if (!isMobileDevice()) {
+                setTimeout(generateQRCode, 1000);
+            }
         });
     </script>
 </body>
 </html>
-
