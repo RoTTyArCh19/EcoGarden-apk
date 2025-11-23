@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descarga mi APK</title>
+    <title>Descarga Ecomarket APK</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
         * {
@@ -102,6 +102,21 @@
             opacity: 0.7;
         }
         
+        .github-info {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .app-info {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -119,31 +134,40 @@
 </head>
 <body>
     <div class="container">
-        <h1>Descarga Mi Aplicación</h1>
-        <p>Obtén la última versión de mi aplicación móvil</p>
+        <div class="app-info">
+            <h1>Ecomarket App</h1>
+            <p>Tu mercado ecológico favorito ahora en tu móvil</p>
+        </div>
         
         <div class="download-section">
             <div id="desktop-view">
                 <div class="qr-container">
                     <div id="qrcode"></div>
                 </div>
-                <p class="instructions">Escanea este código QR con tu dispositivo móvil para descargar la aplicación</p>
+                <p class="instructions">Escanea este código QR con tu dispositivo móvil para descargar Ecomarket</p>
             </div>
             
             <div id="mobile-view">
-                <a href="#" class="btn-download" id="download-btn">Descargar APK</a>
-                <p class="instructions">Toca el botón para descargar e instalar la aplicación</p>
+                <a href="#" class="btn-download" id="download-btn" download="ecomarket.apk">Descargar Ecomarket APK</a>
+                <p class="instructions">Toca el botón para descargar e instalar la aplicación Ecomarket</p>
             </div>
         </div>
         
         <div class="device-info" id="device-info">
             <!-- Información del dispositivo detectado -->
         </div>
+        
+        <div class="github-info">
+            <h3>Instrucciones para GitHub Pages</h3>
+            <p>1. Sube este archivo HTML como <strong>index.html</strong></p>
+            <p>2. Sube tu archivo APK con el nombre <strong>ecomarket.apk</strong></p>
+            <p>3. Activa GitHub Pages en la configuración del repositorio</p>
+        </div>
     </div>
 
     <script>
-        // URL de tu archivo APK - ¡REEMPLAZA ESTO CON TU URL REAL!
-        const apkUrl = "https://tudominio.com/tu-app.apk";
+        // El archivo APK debe llamarse "ecomarket.apk" y estar en la misma carpeta
+        const apkUrl = "ecomarket.apk";
         
         // Elementos del DOM
         const desktopView = document.getElementById('desktop-view');
@@ -158,7 +182,10 @@
         
         // Función para generar el código QR
         function generateQRCode() {
-            QRCode.toCanvas(document.getElementById('qrcode'), apkUrl, {
+            // Usamos la URL completa para el código QR
+            const fullUrl = window.location.href.replace(/index\.html$/, '') + apkUrl;
+            
+            QRCode.toCanvas(document.getElementById('qrcode'), fullUrl, {
                 width: 200,
                 margin: 1,
                 color: {
@@ -179,13 +206,13 @@
                 desktopView.style.display = 'none';
                 mobileView.style.display = 'block';
                 downloadBtn.href = apkUrl;
-                deviceInfo.textContent = "Dispositivo móvil detectado";
+                deviceInfo.textContent = "Dispositivo móvil detectado - Usa el botón para descargar Ecomarket";
             } else {
                 // Es un computador - mostrar código QR
                 desktopView.style.display = 'block';
                 mobileView.style.display = 'none';
                 generateQRCode();
-                deviceInfo.textContent = "Computador detectado - Usa el código QR para descargar en tu móvil";
+                deviceInfo.textContent = "Computador detectado - Usa el código QR para descargar Ecomarket en tu móvil";
             }
         }
         
