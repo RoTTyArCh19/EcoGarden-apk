@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descarga Ecomarket APK</title>
+    <title>Descarga Ecogarden</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
         * {
@@ -145,8 +145,8 @@
 <body>
     <div class="container">
         <div class="app-info">
-            <h1>Ecomarket App</h1>
-            <p>Tu mercado ecológico favorito ahora en tu móvil</p>
+            <h1>Ecogarden App</h1>
+            <p>Tu app ecológica favorita ahora en tu móvil</p>
         </div>
         
         <div class="download-section">
@@ -154,12 +154,12 @@
                 <div class="qr-container">
                     <div id="qrcode"></div>
                 </div>
-                <p class="instructions">Escanea este código QR con tu dispositivo móvil para descargar Ecomarket</p>
+                <p class="instructions">Escanea este código QR con tu dispositivo móvil para descargar Ecogarden</p>
             </div>
             
             <div id="mobile-view">
-                <a href="#" class="btn-download" id="download-btn" download="ecomarket.apk">Descargar Ecomarket APK</a>
-                <p class="instructions">Toca el botón para descargar e instalar la aplicación Ecomarket</p>
+                <a href="#" class="btn-download" id="download-btn" download="ecomarket.apk">Descargar Ecogarden APK</a>
+                <p class="instructions">Toca el botón para descargar e instalar la aplicación Ecogarden</p>
             </div>
         </div>
         
@@ -167,20 +167,11 @@
             <!-- Información del dispositivo detectado -->
         </div>
         
-        <!-- Información de debug (puedes quitar esto después) -->
-        <div class="debug-info" id="debug-info"></div>
-        
-        <div class="github-info">
-            <h3>Instrucciones para GitHub Pages</h3>
-            <p>1. Sube este archivo HTML como <strong>index.html</strong></p>
-            <p>2. Sube tu archivo APK con el nombre <strong>ecomarket.apk</strong></p>
-            <p>3. Activa GitHub Pages en la configuración del repositorio</p>
-        </div>
     </div>
 
     <script>
         // El archivo APK debe llamarse "ecomarket.apk" y estar en la misma carpeta
-        const apkUrl = "ecomarket.apk";
+        const apkUrl = "ecogarden.apk";
         
         // Elementos del DOM
         const desktopView = document.getElementById('desktop-view');
@@ -201,7 +192,7 @@
             try {
                 // Obtener la URL base actual
                 const baseUrl = window.location.href;
-                const fullUrl = baseUrl.replace(/index\.html$/, '').replace(/\/$/, '') + '/' + apkUrl;
+                const fullUrl = "https://rottyarch19.github.io/EcoGarden-apk/ecogarden.apk";
                 
                 // Debug info
                 debugInfo.innerHTML = `URL generada para QR: ${fullUrl}<br>URL base: ${baseUrl}`;
@@ -283,3 +274,4 @@
     </script>
 </body>
 </html>
+
