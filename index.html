@@ -196,70 +196,67 @@
         }
         
         // Función para generar el código QR con manejo de errores
-        function generateQRCode() {
-            try {
-                console.log('Iniciando generación de QR...');
-                
-                // Limpiar contenedor QR primero
-                const qrContainer = document.getElementById('qrcode');
-                if (!qrContainer) {
-                    throw new Error('No se encontró el contenedor del QR');
-                }
-                
-                qrContainer.innerHTML = '';
-                
-                // Debug info
+function generateQRCode() {
+    try {
+        console.log('Iniciando generación de QR...');
+        
+        const qrContainer = document.getElementById('qrcode');
+        if (!qrContainer) {
+            throw new Error('No se encontró el contenedor del QR');
+        }
+
+        qrContainer.innerHTML = '';
+
+        if (debugInfo) {
+            debugInfo.innerHTML = `🔗 URL para descarga: ${apkFullUrl}`;
+            debugInfo.style.display = 'block';
+        }
+
+        // *** AQUÍ EL CAMBIO IMPORTANTE ***
+        qrcode.toCanvas(qrContainer, apkFullUrl, {
+            width: 200,
+            margin: 2,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            },
+            errorCorrectionLevel: 'H'
+        }, function (error) {
+            if (error) {
+                console.error('Error generando QR:', error);
+                qrContainer.innerHTML = `
+                    <div style="color: red; padding: 20px;">
+                        <p>Error generando código QR</p>
+                        <p>URL: ${apkFullUrl}</p>
+                        <button onclick="regenerateQR()" style="padding: 10px; margin: 10px; background: #ff4081; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            Reintentar
+                        </button>
+                    </div>
+                `;
+            } else {
+                console.log('✅ QR generado exitosamente');
                 if (debugInfo) {
-                    debugInfo.innerHTML = `🔗 URL para descarga: ${apkFullUrl}`;
-                    debugInfo.style.display = 'block';
-                }
-                
-                // Generar QR
-                QRCode.toCanvas(qrContainer, apkFullUrl, {
-                    width: 200,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#FFFFFF'
-                    },
-                    errorCorrectionLevel: 'H'
-                }, function (error) {
-                    if (error) {
-                        console.error('Error generando QR:', error);
-                        qrContainer.innerHTML = `
-                            <div style="color: red; padding: 20px;">
-                                <p>Error generando código QR</p>
-                                <p>URL: ${apkFullUrl}</p>
-                                <button onclick="regenerateQR()" style="padding: 10px; margin: 10px; background: #ff4081; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                    Reintentar
-                                </button>
-                            </div>
-                        `;
-                    } else {
-                        console.log('✅ QR generado exitosamente');
-                        if (debugInfo) {
-                            debugInfo.innerHTML += '<br>✅ QR generado correctamente';
-                        }
-                    }
-                });
-                
-            } catch (error) {
-                console.error('Error en generateQRCode:', error);
-                const qrContainer = document.getElementById('qrcode');
-                if (qrContainer) {
-                    qrContainer.innerHTML = `
-                        <div style="color: red; padding: 20px;">
-                            Error: ${error.message}
-                            <br>
-                            <button onclick="generateQRCode()" style="padding: 10px; margin: 10px; background: #ff4081; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                Reintentar Generación QR
-                            </button>
-                        </div>
-                    `;
+                    debugInfo.innerHTML += '<br>✅ QR generado correctamente';
                 }
             }
+        });
+
+    } catch (error) {
+        console.error('Error en generateQRCode:', error);
+        const qrContainer = document.getElementById('qrcode');
+        if (qrContainer) {
+            qrContainer.innerHTML = `
+                <div style="color: red; padding: 20px;">
+                    Error: ${error.message}
+                    <br>
+                    <button onclick="generateQRCode()" style="padding: 10px; margin: 10px; background: #ff4081; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Reintentar Generación QR
+                    </button>
+                </div>
+            `;
         }
-        
+    }
+}        
         // Función para regenerar QR (global para que funcione en el onclick)
         function regenerateQR() {
             console.log('Reintentando generar QR...');
@@ -308,3 +305,4 @@
     </script>
 </body>
 </html>
+
