@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descargar EcoGarden APK</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f3f7f0;
+      text-align: center;
+    }
+
+    h1 {
+      color: #2c5e1a;
+    }
+
+    #qr {
+      margin-top: 20px;
+    }
+
+    .download-btn {
+      background: #2c5e1a;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-size: 20px;
+      text-decoration: none;
+      margin-top: 20px;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>EcoGarden - Descargar APK</h1>
+
+  <div id="phone-view" style="display:none;">
+    <a class="download-btn" href="app-release.apk" download>📥 Descargar APK</a>
+  </div>
+
+  <div id="pc-view" style="display:none;">
+    <p>Escanea este código QR para descargar en tu celular:</p>
+    <div id="qr"></div>
+  </div>
+
+  <!-- Librería para generar QR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+  <script>
+    // Detecta si el usuario está en un dispositivo móvil
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    const apkURL = "app-release.apk"; // reemplazar luego por URL de GitHub Pages
+
+    if (isMobile) {
+      document.getElementById("phone-view").style.display = "block";
+    } else {
+      document.getElementById("pc-view").style.display = "block";
+
+      const qr = new QRious({
+        element: document.getElementById("qr"),
+        size: 250,
+        value: apkURL
+      });
+    }
+  </script>
+</body>
+</html>
